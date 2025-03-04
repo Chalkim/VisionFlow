@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.freedesktop.gstreamer.*;
 import org.freedesktop.gstreamer.Element.PAD_ADDED;
+import org.freedesktop.gstreamer.elements.AppSink;
 import org.freedesktop.gstreamer.elements.DecodeBin;
 import org.freedesktop.gstreamer.webrtc.WebRTCBin;
 import org.freedesktop.gstreamer.webrtc.WebRTCBin.CREATE_OFFER;
@@ -23,9 +25,11 @@ public class GStreamerPipeline {
 
     private static final Logger LOG = Logger.getLogger(GStreamerPipeline.class.getName());
 
-
-    private static final String PIPELINE_DESCRIPTION
-            = "webrtcbin name=webrtcbin bundle-policy=max-bundle stun-server=stun://stun.l.google.com:19302";
+    private static final String PIPELINE_DESCRIPTION =
+            "webrtcbin name=webrtcbin bundle-policy=max-bundle stun-server=stun://stun.l.google.com:19302 " +
+                    "! queue " +
+                    "! videoconvert " +
+                    "! appsink name=appsink";
 
     private final String serverUrl;
     private final String sessionId;
@@ -41,10 +45,19 @@ public class GStreamerPipeline {
         this.sessionId = sessionId;
         this.serverUrl = serverUrl;
 
-        Gst.init(Version.of(1, 16));
+        Gst.init(Version.of(1, 22));
 
         pipe = (Pipeline) Gst.parseLaunch(PIPELINE_DESCRIPTION);
         webRTCBin = (WebRTCBin) pipe.getElementByName("webrtcbin");
+
+        Element sinkElement = pipe.getElementByName("appsink");
+        if (sinkElement instanceof AppSink) {
+            AppSink appSink = (AppSink) sinkElement;
+            appSink.set("emit-signals", true);
+            appSink.connect(this::onNewSample);
+        } else {
+            throw new RuntimeException("Element 'appsink' is not an instance of AppSink");
+        }
 
         setupPipeLogging(pipe);
 
@@ -201,4 +214,20 @@ public class GStreamerPipeline {
         pad.link(decodeBin.getStaticPad("sink"));
     };
 
+    private final AppSink.NEW_SAMPLE onNewSample(AppSink sink) {
+        LOG.info("Received new sample");
+        Sample sample = sink.pullSample();
+        if (sample == null) {
+            return null;
+        }
+
+        Buffer buffer = sample.getBuffer();
+        ByteBuffer byteBuffer = buffer.map(false);
+        LOG.info("Received frame with size: " + byteBuffer.capacity());
+
+        // processFrame(byteBuffer);
+
+        buffer.unmap();
+        return null;
+    }
 }

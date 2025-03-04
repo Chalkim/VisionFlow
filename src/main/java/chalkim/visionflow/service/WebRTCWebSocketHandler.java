@@ -13,7 +13,7 @@ public class WebRTCWebSocketHandler extends TextWebSocketHandler {
     private static final Logger LOG = Logger.getLogger(WebRTCWebSocketHandler.class.getName());
 
     @Value("${visionflow.webrtc.url}")
-    private static String WEBRTC_URL;
+    private String WEBRTC_URL;
 
     private GStreamerPipeline gstPipeline;
 
