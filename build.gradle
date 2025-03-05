@@ -27,7 +27,27 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.freedesktop.gstreamer:gst1-java-core:1.4.0'
-    implementation 'com.google.code.gson:gson:2.12.1'
+
+    // WebJars
+    // https://mvnrepository.com/artifact/org.webjars/webjars-locator
+    implementation 'org.webjars:webjars-locator:0.52'
+    // https://mvnrepository.com/artifact/org.webjars.bower/jquery
+    implementation 'org.webjars.bower:jquery:3.7.1'
+    // https://mvnrepository.com/artifact/org.webjars.bower/bootstrap
+    implementation 'org.webjars.bower:bootstrap:5.3.3'
+    // https://mvnrepository.com/artifact/org.webjars.bower/demo-console
+    implementation 'org.webjars.bower:demo-console:1.5.1'
+    // https://mvnrepository.com/artifact/org.webjars.bower/ekko-lightbox
+    implementation 'org.webjars.bower:ekko-lightbox:5.2.0'
+    // https://mvnrepository.com/artifact/org.webjars.bower/webrtc-adapter
+    implementation 'org.webjars.bower:webrtc-adapter:7.4.0'
+
+    // Kurento
+    // https://mvnrepository.com/artifact/org.kurento/kurento-client
+    implementation 'org.kurento:kurento-client:7.1.0'
+    // https://mvnrepository.com/artifact/org.kurento/kurento-utils-js
+    implementation 'org.kurento:kurento-utils-js:7.1.0'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
