@@ -47,6 +47,7 @@ dependencies {
     implementation 'org.kurento:kurento-client:7.1.0'
     // https://mvnrepository.com/artifact/org.kurento/kurento-utils-js
     implementation 'org.kurento:kurento-utils-js:7.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

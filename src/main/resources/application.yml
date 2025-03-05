@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: VisionFlow
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:redis}
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:}
+      database: 0
+      timeout: 2000
+
+server:
+  port: 8080

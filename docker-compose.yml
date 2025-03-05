@@ -1,19 +1,18 @@
 services:
-
-  #
-  # janus-gateway
-  #
-  janus-gateway:
-    image: 'canyan/janus-gateway:0.10.7'
-    container_name: janus-gateway
-    command: ["/usr/local/bin/janus", "-F", "/usr/local/etc/janus"]
+  app:
+    build: .
+    container_name: visionflow
     ports:
-      - "8088:8088"
-      - "8089:8089"
-      - "8889:8889"
-      - "8000:8000"
-      - "7088:7088"
-      - "7089:7089"
-    volumes:
-      - "./etc/janus/janus.jcfg:/usr/local/etc/janus/janus.jcfg"
-      - "./etc/janus/janus.eventhandler.sampleevh.jcfg:/usr/local/etc/janus/janus.eventhandler.sampleevh.jcfg"
+      - "8080:8080"
+    environment:
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_PASSWORD=
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
