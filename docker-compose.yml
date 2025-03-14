@@ -3,8 +3,11 @@ services:
     build: .
     container_name: visionflow
     ports:
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
     environment:
+      - SERVER_NAME=192.168.1.12
+      - SERVER_PORT=8080
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
       - SPRING_REDIS_PASSWORD=

@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
+  <style>
+    video, canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    canvas {
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
 </head>
 <body>
   <script src="./client.js"></script>

@@ -1,0 +1,54 @@
+worker_processes 1;  # 或者根据你的服务器数量调整
+
+events {
+    worker_connections 1024;  # 每个 worker 进程的最大连接数
+}
+
+http {
+    include       mime.types;  # 加载 MIME 类型
+    default_type  application/octet-stream;
+
+    server {
+        listen 80;
+        server_name ${SERVER_NAME};  # 使用环境变量 SERVER_NAME
+
+        location / {
+            return 301 https://$host$request_uri;
+        }
+    }
+
+    # HTTPS 配置
+    server {
+        listen 443 ssl;
+        server_name ${SERVER_NAME};  # 使用环境变量 SERVER_NAME
+
+        # SSL 配置
+        ssl_certificate /etc/nginx/ssl/selfsigned.crt;
+        ssl_certificate_key /etc/nginx/ssl/selfsigned.key;
+
+        # 强化 SSL 配置（可选）
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:...';
+        ssl_prefer_server_ciphers on;
+
+        # 根路径 / 的反代
+        location / {
+            proxy_pass http://localhost:8080;  # 保留路径
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        # /camera 路径的反代（如果需要单独处理）
+        location /camera {
+            proxy_pass http://localhost:8080;  # 保留路径
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+    }
+}
